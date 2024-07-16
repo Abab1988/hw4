@@ -17,6 +17,7 @@ public class Team {
 
     public void prepareRace(Race race) {
         for (int i = 0; i < this.cars.length; i++) {
+            race.register(this.cars[i]);
             this.cars[i].prepareRace(race);
         }
     }

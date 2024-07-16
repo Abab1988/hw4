@@ -1,6 +1,6 @@
 package org.example;
 
-public class Main {
+public class MainClass {
     public static void main(String[] args) {
         Team teams[] = new Team[3];
 

@@ -1,17 +1,21 @@
 package org.example;
 
 import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Random;
 
 /**
  * Поток болида
  */
+@Log4j2
 public class F1Cars extends Thread implements Comparable<F1Cars> {
 
     /**
      * Идентификатор болида
      */
+    @Getter
     private final long carId;
 
     /**
@@ -28,7 +32,6 @@ public class F1Cars extends Thread implements Comparable<F1Cars> {
      * Массив колес
      */
     private Wheel wheels[] = new Wheel[4];
-
     /**
      * Счетчик пройденной дистанции
      */
@@ -41,6 +44,7 @@ public class F1Cars extends Thread implements Comparable<F1Cars> {
 
     /**
      * ГПСЧ
+
      */
     private Random random;
 
@@ -48,6 +52,7 @@ public class F1Cars extends Thread implements Comparable<F1Cars> {
      * Время гонки, заполняется на финише
      */
     @Getter
+    @Setter
     private long time = 0;
 
     public F1Cars(long carId, PitStop pitStop) {
@@ -55,6 +60,9 @@ public class F1Cars extends Thread implements Comparable<F1Cars> {
         this.carId = carId;
         this.pitStop = pitStop;
         random = new Random();
+        for (int i = 0; i < wheels.length; i++) {
+            wheels[i] = new Wheel();
+        }
 
     }
 
@@ -67,6 +75,7 @@ public class F1Cars extends Thread implements Comparable<F1Cars> {
         this.race = race;
         this.targetDistance = race.getDistance();
         this.start();
+
     }
 
     /**
@@ -77,13 +86,12 @@ public class F1Cars extends Thread implements Comparable<F1Cars> {
      */
     @Override
     public void run() {
-        // TODO дожидаемся старта гонки
         race.start(this);
         while (currentDistance < targetDistance) {
             moveToTarget();
+            log.info("Боллид {} - пройдено {} км.", carId, currentDistance);
         }
-        this.time = race.finish(this);
-
+        race.finish(this);
     }
 
     /**
@@ -93,6 +101,7 @@ public class F1Cars extends Thread implements Comparable<F1Cars> {
      */
     private void moveToTarget() {
         if (isNeedPit()) {
+            log.info("Боллиду {} нужен питстоп ", carId);
             pitStop.pitline(this);
         }
         long speed = getNextSpeed();
